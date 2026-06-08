@@ -41,7 +41,7 @@
       </div>
       <div>
         <label for="lithuanianQuery">Lithuanian word</label>
-        <input id="lithuanianQuery" type="search" placeholder="e.g. atdengti" autocomplete="off" />
+        <input id="lithuanianQuery" type="search" placeholder="e.g. atdengti" value="smail*" autocomplete="off" />
       </div>
     </div>
     <div class="button-row">
@@ -49,6 +49,7 @@
       <button id="clearBtn" type="button">Clear</button>
     </div>
     <p class="hint">Typing any Lithuanian translation should find its German headword, even when an entry has multiple Lithuanian forms.</p>
+    <p class="hint">Use `*` to match any sequence of characters and `?` to match exactly one character.</p>
   </div>
 
   <div class="panel">
@@ -79,6 +80,21 @@ let entries = [];
 
 function normalize(value) {
   return value.trim().toLowerCase();
+}
+
+function buildWildcardRegex(query) {
+  const escaped = query.replace(/[.+^${}()|[\]\\]/g, '\\$&');
+  const regexString = escaped.replace(/\*/g, '.*').replace(/\?/g, '.');
+  return new RegExp(`^${regexString}$`, 'i');
+}
+
+function matchesWildcard(value, query) {
+  if (!query) return true;
+  if (query.includes('*') || query.includes('?')) {
+    const regex = buildWildcardRegex(query);
+    return regex.test(value);
+  }
+  return value.includes(query);
 }
 
 async function loadDictionary() {
@@ -114,9 +130,9 @@ function renderResults(matches) {
 function shouldMatch(entry, query, field) {
   if (!query) return true;
   if (field === 'german') {
-    return entry.headword.toLowerCase().includes(query);
+    return matchesWildcard(entry.headword.toLowerCase(), query);
   }
-  return entry.translations.some(t => t.toLowerCase().includes(query));
+  return entry.translations.some(t => matchesWildcard(t.toLowerCase(), query));
 }
 
 const historyKey = 'lexiconSearchHistory';
