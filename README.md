@@ -8,6 +8,7 @@ This repository preserves the raw dictionary source and provides structured data
 
 - `index.html` — repository landing page with links and a live dictionary search.
 - `start.html` — raw source text with metadata and the dictionary entries.
+- `search.html` — dedicated bilingual search page with German and Lithuanian inputs and a recent search history.
 - `dictionary.csv` — structured dataset with German headwords and Lithuanian translations.
 - `dictionary.json` — structured JSON dataset for programmatic use.
 - `parse_dictionary.py` — parser script to regenerate the dataset from `start.html`.
