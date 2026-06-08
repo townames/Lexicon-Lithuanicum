@@ -116,18 +116,21 @@ async function loadDictionary() {
 }
 
 function renderResults(matches) {
-  if (!matches.length) {
+  const count = matches.length;
+  if (!count) {
+    status.textContent = 'Found 0 matching entries.';
     results.innerHTML = '<p class="hint">No matches found. Try another word.</p>';
     return;
   }
 
+  status.textContent = `Found ${count} matching entries.`;
   results.innerHTML = matches.slice(0, 60).map(entry => {
     const translations = entry.translations.join(', ');
     return `<div class="result"><strong>${entry.headword}</strong><div>${translations}</div></div>`;
   }).join('');
 
-  if (matches.length > 60) {
-    results.innerHTML += `<p class="hint">Showing first 60 of ${matches.length} matches.</p>`;
+  if (count > 60) {
+    results.innerHTML += `<p class="hint">Showing first 60 of ${count} matches.</p>`;
   }
 }
 
