@@ -103,7 +103,7 @@ function matchesWildcard(value, query) {
     const regex = buildWildcardRegex(query);
     return regex.test(value);
   }
-  return value.includes(query);
+  return value === query;
 }
 
 async function loadDictionary() {
