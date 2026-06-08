@@ -1,2 +1,32 @@
-Handschriftliches deutsch-litauisches Wörterbuch des 17. Jahrhunderts.
-Rankraštinis XVII a. vokiečių-lietuvių kalbų žodynas.
+# Lexicon Lithuanicum
+
+Handwritten 17th-century German–Lithuanian dictionary (East Prussia dialect).
+
+This repository preserves the raw dictionary source and provides structured data for reuse.
+
+## Contents
+
+- `start.html` — raw source text with metadata and the dictionary entries.
+- `dictionary.csv` — structured dataset with German headwords and Lithuanian translations.
+- `dictionary.json` — structured JSON dataset for programmatic use.
+- `parse_dictionary.py` — parser script to regenerate the dataset from `start.html`.
+
+## Usage
+
+1. Regenerate the dataset:
+   ```bash
+   python3 parse_dictionary.py
+   ```
+
+2. Use `dictionary.csv` for spreadsheet or data analysis tools.
+3. Use `dictionary.json` for web apps or scripts.
+
+## Notes
+
+- The source preserves historic orthography and East Prussian German–Lithuanian forms.
+- The files are encoded in UTF-8.
+- `dictionary.csv` uses semicolons to separate multiple translations in a single field.
+
+## License
+
+This repository uses the terms in `LICENSE`.
