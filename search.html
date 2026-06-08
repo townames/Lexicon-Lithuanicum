@@ -31,21 +31,22 @@
 <body>
 <main>
   <h1>Lexicon Lithuanicum Search</h1>
-  <p>Search the dictionary by German headword or Lithuanian translation. Use either field, or both together, and see results in the shared window below.</p>
+  <p>Search the dictionary by German headword or Lithuanian translation. Use the German or Lithuanian field separately with its own search button, and see results in the shared window below.</p>
 
   <div class="panel">
     <div class="grid">
       <div>
         <label for="germanQuery">German word</label>
         <input id="germanQuery" type="search" placeholder="e.g. abdecken" autocomplete="off" />
+        <button id="searchGermanBtn" type="button" disabled>Search German</button>
       </div>
       <div>
         <label for="lithuanianQuery">Lithuanian word</label>
         <input id="lithuanianQuery" type="search" placeholder="e.g. atdengti" value="smail*" autocomplete="off" />
+        <button id="searchLithuanianBtn" type="button" disabled>Search Lithuanian</button>
       </div>
     </div>
     <div class="button-row">
-      <button id="searchBtn" type="button" disabled>Search</button>
       <button id="clearBtn" type="button">Clear</button>
     </div>
     <p class="hint">Typing any Lithuanian translation should find its German headword, even when an entry has multiple Lithuanian forms.</p>
@@ -72,7 +73,8 @@
 <script>
 const germanInput = document.getElementById('germanQuery');
 const lithuanianInput = document.getElementById('lithuanianQuery');
-const searchBtn = document.getElementById('searchBtn');
+const searchGermanBtn = document.getElementById('searchGermanBtn');
+const searchLithuanianBtn = document.getElementById('searchLithuanianBtn');
 const clearBtn = document.getElementById('clearBtn');
 const status = document.getElementById('status');
 const results = document.getElementById('results');
@@ -104,10 +106,12 @@ async function loadDictionary() {
     const data = await response.json();
     entries = data.entries || [];
     status.textContent = `Loaded ${entries.length} dictionary entries.`;
-    searchBtn.disabled = false;
+    searchGermanBtn.disabled = false;
+    searchLithuanianBtn.disabled = false;
   } catch (error) {
     status.textContent = 'Failed to load dictionary data: ' + error.message;
-    searchBtn.disabled = true;
+    searchGermanBtn.disabled = true;
+    searchLithuanianBtn.disabled = true;
   }
 }
 
@@ -199,33 +203,41 @@ function applyHistoryEntry(index) {
   if (!entry) return;
   germanInput.value = entry.germanQuery;
   lithuanianInput.value = entry.lithuanianQuery;
-  searchDictionary();
+  if (entry.germanQuery) {
+    searchGerman();
+  } else if (entry.lithuanianQuery) {
+    searchLithuanian();
+  }
 }
 
-function searchDictionary() {
+function searchGerman() {
   const germanQuery = normalize(germanInput.value);
-  const lithuanianQuery = normalize(lithuanianInput.value);
-
-  if (!germanQuery && !lithuanianQuery) {
-    results.innerHTML = '<p class="hint">Enter a German or Lithuanian word to start searching.</p>';
+  if (!germanQuery) {
+    results.innerHTML = '<p class="hint">Enter a German word to search.</p>';
     return;
   }
 
-  addHistoryEntry(germanQuery, lithuanianQuery);
+  addHistoryEntry(germanQuery, '');
 
-  const matches = entries.filter(entry => {
-    const germanMatch = shouldMatch(entry, germanQuery, 'german');
-    const lithuanianMatch = shouldMatch(entry, lithuanianQuery, 'lithuanian');
-    if (germanQuery && lithuanianQuery) {
-      return germanMatch && lithuanianMatch;
-    }
-    return germanMatch && lithuanianMatch;
-  });
-
+  const matches = entries.filter(entry => shouldMatch(entry, germanQuery, 'german'));
   renderResults(matches);
 }
 
-searchBtn.addEventListener('click', searchDictionary);
+function searchLithuanian() {
+  const lithuanianQuery = normalize(lithuanianInput.value);
+  if (!lithuanianQuery) {
+    results.innerHTML = '<p class="hint">Enter a Lithuanian word to search.</p>';
+    return;
+  }
+
+  addHistoryEntry('', lithuanianQuery);
+
+  const matches = entries.filter(entry => shouldMatch(entry, lithuanianQuery, 'lithuanian'));
+  renderResults(matches);
+}
+
+searchGermanBtn.addEventListener('click', searchGerman);
+searchLithuanianBtn.addEventListener('click', searchLithuanian);
 clearBtn.addEventListener('click', () => {
   germanInput.value = '';
   lithuanianInput.value = '';
@@ -235,7 +247,13 @@ clearBtn.addEventListener('click', () => {
 
 [germanInput, lithuanianInput].forEach(input => {
   input.addEventListener('keydown', event => {
-    if (event.key === 'Enter') searchDictionary();
+    if (event.key === 'Enter') {
+      if (event.target === germanInput) {
+        searchGerman();
+      } else {
+        searchLithuanian();
+      }
+    }
   });
 });
 
