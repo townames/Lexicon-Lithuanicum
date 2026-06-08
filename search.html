@@ -25,6 +25,10 @@
     .history-text { color: #374151; margin-top: 0.3rem; }
     .history-actions { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
     .history-actions button { background: #ef4444; }
+    .pagination { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .pagination-label { font-weight: 700; margin-right: 0.5rem; }
+    .page-button { padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; color: #0b3d91; cursor: pointer; }
+    .page-button[disabled] { background: #e5e7eb; color: #6b7280; cursor: default; }
     @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
@@ -57,6 +61,7 @@
     <h2>Results</h2>
     <div id="status">Loading dictionary data…</div>
     <div id="results"></div>
+    <div id="pagination" class="pagination"></div>
   </div>
 
   <div class="panel">
@@ -78,7 +83,11 @@ const searchLithuanianBtn = document.getElementById('searchLithuanianBtn');
 const clearBtn = document.getElementById('clearBtn');
 const status = document.getElementById('status');
 const results = document.getElementById('results');
+const pagination = document.getElementById('pagination');
 let entries = [];
+let currentMatches = [];
+let currentPage = 1;
+const pageSize = 60;
 
 function normalize(value) {
   return value.trim().toLowerCase();
@@ -115,23 +124,46 @@ async function loadDictionary() {
   }
 }
 
-function renderResults(matches) {
+function renderPagination(totalPages) {
+  if (totalPages <= 1) {
+    pagination.innerHTML = '';
+    return;
+  }
+
+  const pageButtons = [];
+  for (let page = 1; page <= totalPages; page += 1) {
+    pageButtons.push(`<button class="page-button" data-page="${page}" type="button"${page === currentPage ? ' disabled' : ''}>${page}</button>`);
+  }
+
+  pagination.innerHTML = `<div class="pagination-label">Pages:</div>${pageButtons.join('')}`;
+}
+
+function renderResults(matches, page = 1) {
+  currentMatches = matches;
   const count = matches.length;
   if (!count) {
     status.textContent = 'Found 0 matching entries.';
     results.innerHTML = '<p class="hint">No matches found. Try another word.</p>';
+    pagination.innerHTML = '';
     return;
   }
 
-  status.textContent = `Found ${count} matching entries.`;
-  results.innerHTML = matches.slice(0, 60).map(entry => {
+  const totalPages = Math.ceil(count / pageSize);
+  currentPage = Math.min(Math.max(1, page), totalPages);
+  const start = (currentPage - 1) * pageSize;
+  const pageItems = matches.slice(start, start + pageSize);
+
+  status.textContent = `Found ${count} matching entries. Page ${currentPage} of ${totalPages}.`;
+  results.innerHTML = pageItems.map(entry => {
     const translations = entry.translations.join(', ');
     return `<div class="result"><strong>${entry.headword}</strong><div>${translations}</div></div>`;
   }).join('');
 
-  if (count > 60) {
-    results.innerHTML += `<p class="hint">Showing first 60 of ${count} matches.</p>`;
+  if (count > pageSize) {
+    results.innerHTML += `<p class="hint">Showing ${pageItems.length} of ${count} matches on this page.</p>`;
   }
+
+  renderPagination(totalPages);
 }
 
 function shouldMatch(entry, query, field) {
@@ -239,13 +271,14 @@ function searchLithuanian() {
   renderResults(matches);
 }
 
-searchGermanBtn.addEventListener('click', searchGerman);
-searchLithuanianBtn.addEventListener('click', searchLithuanian);
+searchGermanBtn.addEventListener('click', () => searchGerman());
+searchLithuanianBtn.addEventListener('click', () => searchLithuanian());
 clearBtn.addEventListener('click', () => {
   germanInput.value = '';
   lithuanianInput.value = '';
   results.innerHTML = '<p class="hint">Enter a German or Lithuanian word to start searching.</p>';
   status.textContent = `Loaded ${entries.length} dictionary entries.`;
+  pagination.innerHTML = '';
 });
 
 [germanInput, lithuanianInput].forEach(input => {
@@ -265,6 +298,14 @@ document.getElementById('historyList').addEventListener('click', event => {
   if (!item) return;
   const index = Number(item.dataset.index);
   applyHistoryEntry(index);
+});
+
+pagination.addEventListener('click', event => {
+  const button = event.target.closest('.page-button');
+  if (!button) return;
+  const page = Number(button.dataset.page);
+  if (!page || page === currentPage) return;
+  renderResults(currentMatches, page);
 });
 
 document.getElementById('clearHistoryBtn').addEventListener('click', () => {
