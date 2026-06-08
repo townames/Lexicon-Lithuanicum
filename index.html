@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lexicon Lithuanicum</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 1.5rem; color: #111; background: #f9fafb; }
+    main { max-width: 900px; margin: 0 auto; }
+    h1, h2 { color: #0b3d91; }
+    a { color: #0b3d91; }
+    .links li { margin: 0.5rem 0; }
+    .panel { background: white; border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 1.25rem; margin-top: 1.5rem; }
+    label { display: block; margin-bottom: 0.75rem; font-weight: 600; }
+    input[type=search] { width: 100%; max-width: 420px; padding: 0.5rem; border: 1px solid #9ca3af; border-radius: 0.5rem; }
+    button { margin-top: 0.5rem; padding: 0.6rem 1rem; border: none; border-radius: 0.5rem; background: #0b3d91; color: white; cursor: pointer; }
+    button:disabled { background: #6b7280; cursor: default; }
+    .result { margin-top: 1rem; padding: 1rem; background: #f8fafc; border-radius: 0.6rem; border: 1px solid #e5e7eb; }
+    .hint { color: #374151; margin-top: 0.5rem; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Lexicon Lithuanicum</h1>
+  <p>This repository preserves a handwritten 17th-century German–Lithuanian dictionary and provides structured data for reuse.</p>
+
+  <div class="panel">
+    <h2>Available files</h2>
+    <ul class="links">
+      <li><a href="start.html" target="_blank">start.html</a> — raw source text and metadata</li>
+      <li><a href="search.html" target="_blank">search.html</a> — dedicated bilingual search page</li>
+      <li><a href="dictionary.csv" target="_blank">dictionary.csv</a> — structured CSV dataset</li>
+      <li><a href="dictionary.json" target="_blank">dictionary.json</a> — structured JSON dataset for programmatic use</li>
+      <li><a href="parse_dictionary.py" target="_blank">parse_dictionary.py</a> — parser script</li>
+    </ul>
+  </div>
+
+  <div class="panel">
+    <h2>Dictionary search</h2>
+    <p>Open the dedicated search page for separate German and Lithuanian inputs.</p>
+    <p><a href="search.html" target="_blank">Go to search.html</a></p>
+  </div>
+</main>
+<script>
+const queryInput = document.getElementById('query');
+const searchBtn = document.getElementById('searchBtn');
+const status = document.getElementById('status');
+const results = document.getElementById('results');
+let entries = [];
+
+async function loadDictionary() {
+  try {
+    const response = await fetch('dictionary.json');
+    if (!response.ok) throw new Error(response.statusText);
+    const data = await response.json();
+    entries = data.entries || [];
+    status.textContent = `Loaded ${entries.length} dictionary entries.`;
+    searchBtn.disabled = false;
+  } catch (error) {
+    status.textContent = 'Failed to load dictionary data: ' + error.message;
+    searchBtn.disabled = true;
+  }
+}
+
+function renderResults(matches) {
+  if (!matches.length) {
+    results.innerHTML = '<p class="hint">No matches found. Try another word.</p>';
+    return;
+  }
+  results.innerHTML = matches.slice(0, 40).map(entry => {
+    return `<div class="result"><strong>${entry.headword}</strong><div>${entry.translations.join(', ')}</div></div>`;
+  }).join('');
+  if (matches.length > 40) {
+    results.innerHTML += `<p class="hint">Showing first 40 of ${matches.length} matches.</p>`;
+  }
+}
+
+function searchDictionary() {
+  const query = queryInput.value.trim().toLowerCase();
+  if (!query) {
+    results.innerHTML = '<p class="hint">Type a word to search the dictionary.</p>';
+    return;
+  }
+  const matches = entries.filter(entry => {
+    return entry.headword.toLowerCase().includes(query) || entry.translations.some(t => t.toLowerCase().includes(query));
+  });
+  renderResults(matches);
+}
+
+searchBtn.addEventListener('click', searchDictionary);
+queryInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') searchDictionary();
+});
+loadDictionary();
+</script>
+</body>
+</html>
