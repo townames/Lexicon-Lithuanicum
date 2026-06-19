@@ -164,7 +164,7 @@ function renderResults(matches, page = 1) {
   status.textContent = `Found ${count} matching entries. Page ${currentPage} of ${totalPages}.`;
   results.innerHTML = pageItems.map(entry => {
     const translations = entry.translations.join(', ');
-    return `<div class="result"><strong>${entry.headword}</strong><div>${translations}</div></div>`;
+    return `<div class="result"><div>${entry.headword}</div><div>${translations}</div></div>`;
   }).join('');
 
   if (count > pageSize) {
@@ -210,14 +210,12 @@ function renderHistory() {
 
   statusText.textContent = `Recent searches (${history.length})`;
   list.innerHTML = history.map((item, index) => {
-    const germanText = item.germanQuery || '—';
-    const lithuanianText = item.lithuanianQuery || '—';
+    const parts = [];
+    if (item.germanQuery) parts.push(`<div class="history-label">German: ${item.germanQuery}</div>`);
+    if (item.lithuanianQuery) parts.push(`<div class="history-text">Lithuanian: ${item.lithuanianQuery}</div>`);
     const timestamp = new Date(item.timestamp).toLocaleString();
-    return `<div class="history-item" data-index="${index}">
-      <div class="history-label">German: ${germanText}</div>
-      <div class="history-text">Lithuanian: ${lithuanianText}</div>
-      <div class="history-text">${timestamp}</div>
-    </div>`;
+    parts.push(`<div class="history-text">${timestamp}</div>`);
+    return `<div class="history-item" data-index="${index}">${parts.join('')}</div>`;
   }).join('');
 }
 
