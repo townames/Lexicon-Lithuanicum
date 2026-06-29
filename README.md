@@ -20,8 +20,13 @@ This repository preserves the raw dictionary source and provides structured data
    python3 parse_dictionary.py
    ```
 
-2. Use `dictionary.csv` for spreadsheet or data analysis tools.
-3. Use `dictionary.json` for web apps or scripts.
+2. Regenerate the directory pages from the updated source:
+   ```bash
+   python3 generate_directory_pages.py
+   ```
+
+3. Use `dictionary.csv` for spreadsheet or data analysis tools.
+4. Use `dictionary.json` for web apps or scripts.
 
 ## Notes
 
