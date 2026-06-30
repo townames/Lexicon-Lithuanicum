@@ -15,18 +15,16 @@ This repository preserves the raw dictionary source and provides structured data
 
 ## Usage
 
-1. Regenerate the dataset:
-   ```bash
-   python3 parse_dictionary.py
-   ```
+Run the full regeneration flow in one step:
 
-2. Regenerate the directory pages from the updated source:
-   ```bash
-   python3 generate_directory_pages.py
-   ```
+```bash
+bash regenerate_dictionary.sh
+```
 
-3. Use `dictionary.csv` for spreadsheet or data analysis tools.
-4. Use `dictionary.json` for web apps or scripts.
+This will regenerate both the structured data files and the directory HTML pages from the current source.
+
+Use `dictionary.csv` for spreadsheet or data analysis tools.
+Use `dictionary.json` for web apps or scripts.
 
 ## Notes
 

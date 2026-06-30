@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from collections import OrderedDict
+import json
 import unicodedata
 
 SRC = Path('start.html')
+DICTIONARY_JSON = Path('dictionary.json')
 
 DE_LT_PAGE_KEYS = [chr(c) for c in range(ord('a'), ord('z') + 1)] + ['ue']
 LT_DE_PAGE_KEYS = [chr(c) for c in range(ord('a'), ord('z') + 1)] + ['ss']
@@ -71,8 +73,8 @@ def letter_key_de(word: str) -> str:
     return base[0] if base and base[0].isalpha() else first
 
 
-def parse_entries():
-    text = SRC.read_text(encoding='utf-8')
+def parse_entries_from_start_html(path: Path = SRC):
+    text = path.read_text(encoding='utf-8')
     lines = text.splitlines()
     start_index = None
     for i, line in enumerate(lines):
@@ -95,6 +97,23 @@ def parse_entries():
             continue
         entries.append({'headword': headword, 'translations': translations})
     return entries
+
+
+def parse_entries_from_dictionary_json(path: Path = DICTIONARY_JSON):
+    payload = json.loads(path.read_text(encoding='utf-8'))
+    entries = payload.get('entries', [])
+    return [
+        {'headword': entry['headword'], 'translations': entry.get('translations', [])}
+        for entry in entries
+    ]
+
+
+def parse_entries(path: Path | None = None):
+    if path is None:
+        path = DICTIONARY_JSON if DICTIONARY_JSON.exists() else SRC
+    if path == DICTIONARY_JSON or path.suffix == '.json':
+        return parse_entries_from_dictionary_json(path)
+    return parse_entries_from_start_html(path)
 
 
 def build_reverse(entries):
