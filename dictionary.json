@@ -88,8 +88,6 @@
         "nuraßimas"
       ]
     },
-
-
     {
       "headword": "abbiß",
       "translations": [
@@ -4842,7 +4840,7 @@
       ]
     },
     {
-      "headword": "auspres sen",
+      "headword": "auspressen",
       "translations": [
         "ißspausti"
       ]
@@ -5008,7 +5006,7 @@
     {
       "headword": "ausschlaffen",
       "translations": [
-        "is simiegoti"
+        "issimiegoti"
       ]
     },
     {
@@ -5093,7 +5091,7 @@
       ]
     },
     {
-      "headword": "ausschwizen ausscholen",
+      "headword": "ausscholen",
       "translations": [
         "ißskalauti"
       ]
@@ -5435,7 +5433,7 @@
       "headword": "ausziehen",
       "translations": [
         "ißwilkti",
-        "is siwilkti",
+        "issiwilkti",
         "issitraukti",
         "issiauti"
       ]
@@ -5443,7 +5441,7 @@
     {
       "headword": "auszug",
       "translations": [
-        "is sitraukimas"
+        "issitraukimas"
       ]
     },
     {
@@ -5979,7 +5977,7 @@
     {
       "headword": "bedeutung",
       "translations": [
-        "is simanimas"
+        "issimanimas"
       ]
     },
     {
@@ -6940,7 +6938,7 @@
       ]
     },
     {
-      "headword": "beruffene der rechtmas sigen weyse",
+      "headword": "beruffene der rechtmassigen weyse",
       "translations": [
         "tikru budu pawadintas"
       ]
@@ -8103,7 +8101,7 @@
       ]
     },
     {
-      "headword": "beymes sen",
+      "headword": "beymessen",
       "translations": [
         "prirokûti"
       ]
@@ -21448,7 +21446,7 @@
       "translations": [
         "szwiesybe",
         "swiesa",
-        "kaistybe"
+        "skaistybe"
       ]
     },
     {
@@ -33885,7 +33883,7 @@
         "zemas",
         "zemjaus",
         "zemjausis",
-        "nuze mintûlis"
+        "nuzemintûlis"
       ]
     },
     {
@@ -38723,7 +38721,7 @@
     {
       "headword": "scheiden",
       "translations": [
-        "kirti"
+        "skirti"
       ]
     },
     {
@@ -40612,7 +40610,7 @@
     {
       "headword": "schwarte",
       "translations": [
-        "kura"
+        "skura"
       ]
     },
     {
@@ -41488,8 +41486,8 @@
       "headword": "sicher",
       "translations": [
         "drasus",
-        "aus",
-        "auses"
+        "drasaus",
+        "drasauses"
       ]
     },
     {
@@ -44703,9 +44701,9 @@
       "headword": "tieff",
       "translations": [
         "gillus",
-        "aus",
+        "gillaus",
         "gylinay",
-        "ausesis"
+        "gylinausesis"
       ]
     },
     {
@@ -55179,7 +55177,7 @@
       "headword": "zottig",
       "translations": [
         "kudlûtas",
-        "karotas"
+        "skarotas"
       ]
     },
     {
